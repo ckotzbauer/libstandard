@@ -1,4 +1,4 @@
-libstandard
+package root
 
 import "strings"
 

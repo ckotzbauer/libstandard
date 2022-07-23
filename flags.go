@@ -1,4 +1,4 @@
-libstandard
+package root
 
 const (
 	Verbosity = "verbosity"
