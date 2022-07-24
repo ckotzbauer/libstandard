@@ -2,7 +2,10 @@ module github.com/ckotzbauer/libstandard
 
 go 1.18
 
-require github.com/sirupsen/logrus v1.9.0
+require (
+	github.com/iancoleman/strcase v0.2.0
+	github.com/sirupsen/logrus v1.9.0
+)
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect

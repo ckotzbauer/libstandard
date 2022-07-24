@@ -5,6 +5,7 @@ import (
 	"os"
 	"reflect"
 
+	"github.com/iancoleman/strcase"
 	"github.com/spf13/cobra"
 )
 
@@ -22,6 +23,6 @@ func DefaultInitializer(cfg interface{}, cmd *cobra.Command, name string) error 
 	}
 
 	x := reflect.ValueOf(cfg).Elem()
-	verbosity := x.FieldByName(Verbosity).String()
+	verbosity := x.FieldByName(strcase.ToCamel(Verbosity)).String()
 	return SetupLogging(os.Stdout, verbosity)
 }
