@@ -291,13 +291,15 @@ func TestReadFromEnvWithPrefix(t *testing.T) {
 
 func TestReadFromFlags(t *testing.T) {
 	type Config struct {
-		Host string `flag:"host"`
-		Port int32  `flag:"port"`
+		Host  string   `flag:"host"`
+		Port  int32    `flag:"port"`
+		Names []string `flag:"names"`
 	}
 
 	flagSet := &pflag.FlagSet{}
 	flagSet.String("host", "google.de", "Host-Flag")
 	flagSet.Int32("port", 5432, "Port-Flag")
+	flagSet.StringSlice("names", []string{"john"}, "")
 	err := flagSet.Set("port", "1000")
 	assert.Nil(t, err)
 
@@ -307,8 +309,9 @@ func TestReadFromFlags(t *testing.T) {
 	}
 
 	var expected = Config{
-		Host: "google.de",
-		Port: 1000,
+		Host:  "google.de",
+		Port:  1000,
+		Names: []string{"john"},
 	}
 
 	if !reflect.DeepEqual(cfg, expected) {

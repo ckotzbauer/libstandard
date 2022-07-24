@@ -511,6 +511,8 @@ func parseSlice(valueType reflect.Type, value string, sep string) (*reflect.Valu
 	if valueType.Elem().Kind() == reflect.Uint8 {
 		sliceValue = reflect.ValueOf([]byte(value))
 	} else if len(strings.TrimSpace(value)) != 0 {
+		value = strings.Replace(value, "[", "", 1)
+		value = strings.Replace(value, "]", "", 1)
 		values := strings.Split(value, sep)
 		sliceValue = reflect.MakeSlice(valueType, len(values), len(values))
 
