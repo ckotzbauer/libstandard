@@ -20,5 +20,5 @@ func SetupLogging(out io.Writer, level string) error {
 }
 
 func AddVerbosityFlag(cmd *cobra.Command) {
-	cmd.PersistentFlags().StringP(Verbosity, "v", "", "Log-level (debug, info, warn, error, fatal, panic)")
+	cmd.PersistentFlags().StringP(Verbosity, "v", logrus.InfoLevel.String(), "Log-level (debug, info, warn, error, fatal, panic)")
 }
