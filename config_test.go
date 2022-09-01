@@ -2,7 +2,6 @@ package libstandard
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -518,7 +517,7 @@ array: [1, 2, 3]`,
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tmpFile, err := ioutil.TempFile(os.TempDir(), fmt.Sprintf("*.%s", tt.ext))
+			tmpFile, err := os.CreateTemp(os.TempDir(), fmt.Sprintf("*.%s", tt.ext))
 			if err != nil {
 				t.Fatal("cannot create temporary file:", err)
 			}
@@ -748,7 +747,7 @@ no-env: this
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tmpFile, err := ioutil.TempFile(os.TempDir(), fmt.Sprintf("*.%s", tt.ext))
+			tmpFile, err := os.CreateTemp(os.TempDir(), fmt.Sprintf("*.%s", tt.ext))
 			if err != nil {
 				t.Fatal("cannot create temporary file:", err)
 			}
