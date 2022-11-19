@@ -21,6 +21,11 @@ type sliceStringTestData struct {
 	expected string
 }
 
+type mapSliceStringTestData struct {
+	input    []string
+	expected map[string]string
+}
+
 func TestUnescape(t *testing.T) {
 	tests := []stringTestData{
 		{
@@ -104,6 +109,34 @@ func TestFirstOrEmpty(t *testing.T) {
 	for _, v := range tests {
 		t.Run("", func(t *testing.T) {
 			out := FirstOrEmpty(v.input)
+			assert.Equal(t, v.expected, out)
+		})
+	}
+}
+
+func TestToMap(t *testing.T) {
+	tests := []mapSliceStringTestData{
+		{
+			input:    []string{""},
+			expected: map[string]string{},
+		},
+		{
+			input:    []string{"a=b", "b=c"},
+			expected: map[string]string{"a": "b", "b": "c"},
+		},
+		{
+			input:    []string{"a=", "b=c"},
+			expected: map[string]string{"a": "", "b": "c"},
+		},
+		{
+			input:    []string{"=b", "b=c"},
+			expected: map[string]string{"": "b", "b": "c"},
+		},
+	}
+
+	for _, v := range tests {
+		t.Run("", func(t *testing.T) {
+			out := ToMap(v.input)
 			assert.Equal(t, v.expected, out)
 		})
 	}

@@ -30,3 +30,19 @@ func FirstOrEmpty(slice []string) string {
 
 	return ""
 }
+
+// ToMap converts a string-slice to a map[string]string
+func ToMap(slice []string) map[string]string {
+	m := make(map[string]string, 0)
+
+	for _, s := range slice {
+		if len(strings.TrimSpace(s)) == 0 {
+			continue
+		}
+
+		splitted := strings.Split(s, "=")
+		m[splitted[0]] = splitted[1]
+	}
+
+	return m
+}
