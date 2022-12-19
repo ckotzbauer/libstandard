@@ -7,19 +7,11 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: '1.19.0'
-
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Unit tests
-        run: make test
-
-      - uses: codecov/codecov-action@v3
-        with:
-          files: cover.out
+    uses: ckotzbauer/actions-toolkit/.github/workflows/toolkit-build-test.yml@0.29.0
+    with:
+      install-go: true
+      go-version: "1.19.4"
+      install-goreleaser: true
+      test-commands: make test
+      report-coverage: true
+      coverage-file: cover.out
