@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/andybalholm/brotli v1.0.5
 	github.com/iancoleman/strcase v0.2.0
-	github.com/sirupsen/logrus v1.9.2
+	github.com/sirupsen/logrus v1.9.3
 )
 
 require (
