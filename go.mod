@@ -3,7 +3,7 @@ module github.com/ckotzbauer/libstandard
 go 1.20
 
 require (
-	github.com/andybalholm/brotli v1.0.6
+	github.com/andybalholm/brotli v1.1.0
 	github.com/iancoleman/strcase v0.3.0
 	github.com/sirupsen/logrus v1.9.3
 )
