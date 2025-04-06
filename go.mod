@@ -1,6 +1,6 @@
 module github.com/ckotzbauer/libstandard
 
-go 1.20
+go 1.24
 
 require (
 	github.com/andybalholm/brotli v1.1.1
@@ -15,9 +15,9 @@ require (
 )
 
 require (
-	github.com/spf13/cobra v1.8.1
-	github.com/spf13/pflag v1.0.5
+	github.com/spf13/cobra v1.9.1
+	github.com/spf13/pflag v1.0.6
 	github.com/stretchr/testify v1.10.0
-	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
+	golang.org/x/sys v0.32.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1
 )

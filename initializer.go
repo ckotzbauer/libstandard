@@ -19,7 +19,7 @@ func DefaultInitializer(cfg interface{}, cmd *cobra.Command, name string) error 
 
 	err = Read(cfg, cmd.Flags(), config, DefaultFileConfig{Name: name, Extensions: []string{"yaml"}, Paths: []string{".", "~/.config/" + name}})
 	if err != nil {
-		return fmt.Errorf("An error occurred while reading the config! %w", err)
+		return fmt.Errorf("an error occurred while reading the config! %w", err)
 	}
 
 	x := reflect.ValueOf(cfg).Elem()

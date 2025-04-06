@@ -213,6 +213,7 @@ func TestReadFromEnv(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for env, val := range tt.env {
+				// nolint
 				os.Setenv(env, val)
 			}
 			defer os.Clearenv()
@@ -257,6 +258,7 @@ func TestReadFromEnvWithPrefix(t *testing.T) {
 		"EXTRA_DB_DEBUG":    "true",
 	}
 	for k, v := range env {
+		// nolint
 		os.Setenv(k, v)
 	}
 
@@ -409,6 +411,7 @@ func TestReadFromFlagsWithEnvs(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for env, val := range tt.env {
+				// nolint
 				os.Setenv(env, val)
 			}
 			defer os.Clearenv()
@@ -521,6 +524,7 @@ array: [1, 2, 3]`,
 			if err != nil {
 				t.Fatal("cannot create temporary file:", err)
 			}
+			// nolint
 			defer os.Remove(tmpFile.Name())
 
 			text := []byte(tt.file)
@@ -620,6 +624,7 @@ two: 2`,
 					if err != nil {
 						t.Fatal("cannot create temporary file:", err)
 					}
+					// nolint
 					defer os.Remove(tmpFile.Name())
 
 					if _, err = tmpFile.Write(text); err != nil {
@@ -751,6 +756,7 @@ no-env: this
 			if err != nil {
 				t.Fatal("cannot create temporary file:", err)
 			}
+			// nolint
 			defer os.Remove(tmpFile.Name())
 
 			text := []byte(tt.file)
@@ -759,6 +765,7 @@ no-env: this
 			}
 
 			for env, val := range tt.env {
+				// nolint
 				os.Setenv(env, val)
 			}
 			defer os.Clearenv()

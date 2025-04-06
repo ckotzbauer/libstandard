@@ -32,20 +32,20 @@ func AddConfigFlag(cmd *cobra.Command) {
 //
 // Example:
 //
-//	 type ConfigDatabase struct {
-//	 	Port     string `env:"PORT" env-default:"5432"`
-//	 	Host     string `env:"HOST" env-default:"localhost"`
-//	 	Name     string `env:"NAME" env-default:"postgres"`
-//	 	User     string `env:"USER" env-default:"user"`
-//	 	Password string `env:"PASSWORD"`
-//	 }
+//	type ConfigDatabase struct {
+//		Port     string `env:"PORT" env-default:"5432"`
+//		Host     string `env:"HOST" env-default:"localhost"`
+//		Name     string `env:"NAME" env-default:"postgres"`
+//		User     string `env:"USER" env-default:"user"`
+//		Password string `env:"PASSWORD"`
+//	}
 //
-//	 var cfg ConfigDatabase
+//	var cfg ConfigDatabase
 //
-//	 err := config.ReadFromEnv(&cfg)
-//	 if err != nil {
-//	     ...
-//	 }
+//	err := config.ReadFromEnv(&cfg)
+//	if err != nil {
+//	    ...
+//	}
 func ReadFromEnv(cfg interface{}) error {
 	return Read(cfg, nil, "", DefaultFileConfig{})
 }
@@ -55,20 +55,20 @@ func ReadFromEnv(cfg interface{}) error {
 //
 // Example:
 //
-//	 type ConfigDatabase struct {
-//	 	Port     string `yaml:"port" env:"PORT" env-default:"5432"`
-//	 	Host     string `yaml:"host" env:"HOST" env-default:"localhost"`
-//	 	Name     string `yaml:"name" env:"NAME" env-default:"postgres"`
-//	 	User     string `yaml:"user" env:"USER" env-default:"user"`
-//	 	Password string `yaml:"password" env:"PASSWORD"`
-//	 }
+//	type ConfigDatabase struct {
+//		Port     string `yaml:"port" env:"PORT" env-default:"5432"`
+//		Host     string `yaml:"host" env:"HOST" env-default:"localhost"`
+//		Name     string `yaml:"name" env:"NAME" env-default:"postgres"`
+//		User     string `yaml:"user" env:"USER" env-default:"user"`
+//		Password string `yaml:"password" env:"PASSWORD"`
+//	}
 //
-//	 var cfg ConfigDatabase
+//	var cfg ConfigDatabase
 //
-//	 err := config.ReadFromFile(&cfg, "config.yml", DefaultFileConfig{})
-//	 if err != nil {
-//	     ...
-//	 }
+//	err := config.ReadFromFile(&cfg, "config.yml", DefaultFileConfig{})
+//	if err != nil {
+//	    ...
+//	}
 func ReadFromFile(cfg interface{}, file string, defaultCfg DefaultFileConfig) error {
 	return Read(cfg, nil, file, defaultCfg)
 }
@@ -78,23 +78,23 @@ func ReadFromFile(cfg interface{}, file string, defaultCfg DefaultFileConfig) er
 //
 // Example:
 //
-//	 type ConfigDatabase struct {
-//	 	Port     string `flag:"port" env:"PORT" env-default:"5432"`
-//	 	Host     string `flag:"host" env:"HOST" env-default:"localhost"`
-//	 	Name     string `flag:"name" env:"NAME" env-default:"postgres"`
-//	 	User     string `flag:"user" env:"USER" env-default:"user"`
-//	 	Password string `flag:"password" env:"PASSWORD"`
-//	 }
+//	type ConfigDatabase struct {
+//		Port     string `flag:"port" env:"PORT" env-default:"5432"`
+//		Host     string `flag:"host" env:"HOST" env-default:"localhost"`
+//		Name     string `flag:"name" env:"NAME" env-default:"postgres"`
+//		User     string `flag:"user" env:"USER" env-default:"user"`
+//		Password string `flag:"password" env:"PASSWORD"`
+//	}
 //
-//	 var cfg ConfigDatabase
+//	var cfg ConfigDatabase
 //
-//	 cmd.Flags().Int32("port", 5432, "Server-Port")
-//	 ...
+//	cmd.Flags().Int32("port", 5432, "Server-Port")
+//	...
 //
-//	 err := config.ReadFromFlags(&cfg, cmd.Flags())
-//	 if err != nil {
-//	     ...
-//	 }
+//	err := config.ReadFromFlags(&cfg, cmd.Flags())
+//	if err != nil {
+//	    ...
+//	}
 func ReadFromFlags(cfg interface{}, flags *pflag.FlagSet) error {
 	return Read(cfg, flags, "", DefaultFileConfig{})
 }
@@ -104,23 +104,23 @@ func ReadFromFlags(cfg interface{}, flags *pflag.FlagSet) error {
 //
 // Example:
 //
-//	 type ConfigDatabase struct {
-//	 	Port     string `flag:"port" yaml:"port" env:"PORT" env-default:"5432"`
-//	 	Host     string `flag:"host" yaml:"host" env:"HOST" env-default:"localhost"`
-//	 	Name     string `flag:"name" yaml:"name" env:"NAME" env-default:"postgres"`
-//	 	User     string `flag:"user" yaml:"user" env:"USER" env-default:"user"`
-//	 	Password string `flag:"password" yaml:"password" env:"PASSWORD"`
-//	 }
+//	type ConfigDatabase struct {
+//		Port     string `flag:"port" yaml:"port" env:"PORT" env-default:"5432"`
+//		Host     string `flag:"host" yaml:"host" env:"HOST" env-default:"localhost"`
+//		Name     string `flag:"name" yaml:"name" env:"NAME" env-default:"postgres"`
+//		User     string `flag:"user" yaml:"user" env:"USER" env-default:"user"`
+//		Password string `flag:"password" yaml:"password" env:"PASSWORD"`
+//	}
 //
-//	 var cfg ConfigDatabase
+//	var cfg ConfigDatabase
 //
-//	 cmd.Flags().Int32("port", 5432, "Server-Port")
-//	 ...
+//	cmd.Flags().Int32("port", 5432, "Server-Port")
+//	...
 //
-//	 err := config.Read(&cfg, cmd.Flags(), "config.yml", , DefaultFileConfig{})
-//	 if err != nil {
-//	     ...
-//	 }
+//	err := config.Read(&cfg, cmd.Flags(), "config.yml", , DefaultFileConfig{})
+//	if err != nil {
+//	    ...
+//	}
 func Read(cfg interface{}, flags *pflag.FlagSet, file string, defaultCfg DefaultFileConfig) error {
 	metaInfo, err := readStructMetadata(cfg)
 	if err != nil {
@@ -178,15 +178,15 @@ const (
 //
 // To implement a custom value setter you need to add a SetValue function to your type that will receive a string raw value:
 //
-// 	type MyField string
+//	type MyField string
 //
-// 	func (f *MyField) SetValue(s string) error {
-// 		if s == "" {
-// 			return fmt.Errorf("field value can't be empty")
-// 		}
-// 		*f = MyField("my field is: " + s)
-// 		return nil
-// 	}
+//	func (f *MyField) SetValue(s string) error {
+//		if s == "" {
+//			return fmt.Errorf("field value can't be empty")
+//		}
+//		*f = MyField("my field is: " + s)
+//		return nil
+//	}
 type Setter interface {
 	SetValue(string) error
 }
@@ -266,6 +266,7 @@ func parseFile(path string, cfg interface{}) error {
 	}
 
 	/* #nosec */
+	// nolint
 	defer f.Close()
 
 	// parse the file depending on the file type
