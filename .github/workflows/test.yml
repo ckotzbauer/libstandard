@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+permissions:
+  actions: read
+  contents: read
+
 jobs:
   test:
     uses: ckotzbauer/actions-toolkit/.github/workflows/toolkit-build-test.yml@0.52.0

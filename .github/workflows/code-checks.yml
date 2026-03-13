@@ -6,6 +6,10 @@ on:
     branches:
       - "**"
 
+permissions:
+  actions: read
+  contents: read
+
 jobs:
   gosec:
     uses: ckotzbauer/actions-toolkit/.github/workflows/toolkit-lint.yml@0.52.0
