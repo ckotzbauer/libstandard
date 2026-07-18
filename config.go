@@ -326,7 +326,7 @@ func readStructMetadata(cfgRoot interface{}) ([]structMeta, error) {
 		sPrefix := cfgStack[i].Prefix
 
 		// unwrap pointer
-		if s.Kind() == reflect.Ptr {
+		if s.Kind() == reflect.Pointer {
 			s = s.Elem()
 		}
 
@@ -573,7 +573,7 @@ func isZero(v reflect.Value) bool {
 			}
 		}
 		return true
-	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice, reflect.UnsafePointer:
+	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Pointer, reflect.Slice, reflect.UnsafePointer:
 		return v.IsNil()
 	case reflect.String:
 		return v.Len() == 0
