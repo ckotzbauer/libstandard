@@ -5,7 +5,7 @@ go 1.26.0
 require (
 	github.com/andybalholm/brotli v1.2.2
 	github.com/iancoleman/strcase v0.3.0
-	github.com/jackc/pgx/v5 v5.10.0
+	github.com/jackc/pgx/v5 v5.11.0
 	github.com/sirupsen/logrus v1.9.4
 )
 
