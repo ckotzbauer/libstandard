@@ -290,6 +290,87 @@ func TestReadFromEnvWithPrefix(t *testing.T) {
 	}
 }
 
+func TestReadFromEnvFile(t *testing.T) {
+	type config struct {
+		Password string `env:"SECRET_PASSWORD" env-default:"defaultpass"`
+		Token    string `env:"SECRET_TOKEN"`
+	}
+
+	secretDir := t.TempDir()
+	passwordFile := filepath.Join(secretDir, "password")
+	if err := os.WriteFile(passwordFile, []byte("hunter2\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	multiNewlineFile := filepath.Join(secretDir, "multi")
+	if err := os.WriteFile(multiNewlineFile, []byte("keep\n\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	emptyFile := filepath.Join(secretDir, "empty")
+	if err := os.WriteFile(emptyFile, nil, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	tests := []struct {
+		name    string
+		env     map[string]string
+		want    string
+		wantErr bool
+	}{
+		{
+			name: "from file trims one trailing newline",
+			env:  map[string]string{"SECRET_PASSWORD_FILE": passwordFile},
+			want: "hunter2",
+		},
+		{
+			name: "env wins over file",
+			env:  map[string]string{"SECRET_PASSWORD": "fromEnv", "SECRET_PASSWORD_FILE": passwordFile},
+			want: "fromEnv",
+		},
+		{
+			name: "unset uses default",
+			env:  nil,
+			want: "defaultpass",
+		},
+		{
+			name: "empty file counts as set-to-empty, suppressing default",
+			env:  map[string]string{"SECRET_PASSWORD_FILE": emptyFile},
+			want: "",
+		},
+		{
+			name: "only the final newline is stripped",
+			env:  map[string]string{"SECRET_PASSWORD_FILE": multiNewlineFile},
+			want: "keep\n",
+		},
+		{
+			name:    "missing file errors",
+			env:     map[string]string{"SECRET_TOKEN_FILE": filepath.Join(secretDir, "missing")},
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			for k, v := range tt.env {
+				// nolint
+				os.Setenv(k, v)
+			}
+			defer os.Clearenv()
+
+			var cfg config
+			err := ReadFromEnv(&cfg)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("wrong error behavior %v, wantErr %v", err, tt.wantErr)
+			}
+			if !tt.wantErr && cfg.Password != tt.want {
+				t.Errorf("wrong data %q, want %q", cfg.Password, tt.want)
+			}
+			if tt.wantErr && cfg.Token != "" {
+				t.Errorf("expected empty token, got %q", cfg.Token)
+			}
+		})
+	}
+}
+
 func TestReadFromFlags(t *testing.T) {
 	type Config struct {
 		Host  string   `flag:"host"`

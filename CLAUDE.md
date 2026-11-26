@@ -71,6 +71,7 @@ The configuration system uses struct tags to define how fields are populated. It
 
 Supported struct tags:
 - `env:"VAR_NAME"` -- environment variable name(s), comma-separated for multiple
+- `<VAR>_FILE` fallback -- automatically honored for every `env` var: if `VAR` is unset but `VAR_FILE` points to a file, the file content (one trailing newline stripped, 1 MiB cap) becomes the value. Enables volume-mounted k8s secrets without putting secrets into the environment (`DB_PASSWORD_FILE=/var/run/secrets/db/password`). **Caution:** a field tagged `env:"VAR"` treats an existing `VAR_FILE` variable as a secret path, so do not reuse `VAR_FILE` names for other purposes in apps using this config system.
 - `env-default:"value"` -- default value
 - `env-required:"true"` -- marks field as required
 - `env-separator:","` -- custom separator for slices/maps (default is `,`)

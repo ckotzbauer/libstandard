@@ -22,7 +22,13 @@ modes are supported and picked automatically:
 latency.
 
 `DatabaseConfig` uses the same tags as the rest of the config machinery, so
-every value has a default that env, file or CLI flag can override.
+every value has a default that env, file or CLI flag can override. Secrets can
+come from files instead of the environment: every `env` var also honors a
+`<VAR>_FILE` fallback, so set `DB_PASSWORD_FILE=/var/run/secrets/db/password`
+(one trailing newline stripped, 1 MiB cap) and volume-mounted k8s secrets never
+appear as ENV. **Caution:** a field tagged `env:"VAR"` treats an existing
+`VAR_FILE` variable as a secret path — do not reuse `VAR_FILE` names for other
+purposes in the same app.
 
 ```go
 var cfg struct {

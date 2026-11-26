@@ -156,6 +156,11 @@ func Read(cfg interface{}, flags *pflag.FlagSet, file string, defaultCfg Default
 const (
 	// DefaultSeparator is a default list and map separator character
 	DefaultSeparator = ","
+	// EnvFileSuffix is appended to an env var name to read its value from a
+	// file instead of the environment. For `env:"DB_PASSWORD"` a
+	// `DB_PASSWORD_FILE` variable pointing at a file (e.g. a volume-mounted
+	// k8s secret) is honored as a fallback when the env var itself is unset.
+	EnvFileSuffix = "_FILE"
 )
 
 // Supported tags
@@ -404,12 +409,34 @@ func readStructMetadata(cfgRoot interface{}) ([]structMeta, error) {
 func readEnvVars(cfg interface{}, metaInfo []structMeta) error {
 	for _, meta := range metaInfo {
 		var rawValue *string
+		var fileErr error
 
 		for _, env := range meta.envList {
 			if value, ok := os.LookupEnv(env); ok {
 				rawValue = &value
 				break
 			}
+
+			// File-based fallback: env:"DB_PASSWORD" can be supplied as
+			// DB_PASSWORD_FILE=/path/to/file (e.g. a volume-mounted k8s
+			// secret) instead of putting the value itself into the environment.
+			// On a read error try the next env name; a broken mount only fails
+			// the field when no other source could provide a value.
+			if path, ok := os.LookupEnv(env + EnvFileSuffix); ok {
+				value, err := readFileValue(path)
+				if err != nil {
+					fileErr = err
+					continue
+				}
+				rawValue = &value
+				break
+			}
+		}
+
+		// Surface a broken secret mount instead of silently falling back to a
+		// default value.
+		if rawValue == nil && fileErr != nil {
+			return fileErr
 		}
 
 		if rawValue == nil && meta.isFieldValueZero() {
@@ -426,6 +453,38 @@ func readEnvVars(cfg interface{}, metaInfo []structMeta) error {
 	}
 
 	return nil
+}
+
+// maxSecretFileSize caps a single file-based value. Secrets such as a
+// postgres password or a token never legitimately exceed this.
+const maxSecretFileSize = 1 << 20
+
+// readFileValue returns the file content with at most one trailing newline
+// stripped. Secrets written via echo/printf (and k8s Secret mounts) usually
+// end in one; everything else, including spaces and further newlines, is kept
+// verbatim.
+func readFileValue(path string) (string, error) {
+	/* #nosec G304 - path is operator-supplied configuration, same as parseFile */
+	f, err := os.Open(path)
+	if err != nil {
+		return "", fmt.Errorf("reading file-based value from %q: %w", path, err)
+	}
+	defer f.Close()
+
+	// Bounded read: a misconfigured mount (e.g. /dev/zero) must not hang or
+	// exhaust memory.
+	content, err := io.ReadAll(io.LimitReader(f, maxSecretFileSize+1))
+	if err != nil {
+		return "", fmt.Errorf("reading file-based value from %q: %w", path, err)
+	}
+	if len(content) > maxSecretFileSize {
+		return "", fmt.Errorf("file-based value from %q exceeds %d bytes", path, maxSecretFileSize)
+	}
+
+	s := string(content)
+	s = strings.TrimSuffix(s, "\n")
+	s = strings.TrimSuffix(s, "\r")
+	return s, nil
 }
 
 // parseValue parses value into the corresponding field.
