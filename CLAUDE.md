@@ -88,6 +88,7 @@ Entry points:
 - `ReadFromFile(cfg, file, defaultCfg)` -- file + env vars
 - `ReadFromFlags(cfg, flags)` -- flags + env vars
 - `Read(cfg, flags, file, defaultCfg)` -- all sources combined
+- `EnvOrFile(name)` -- single-value `os.Getenv` counterpart honoring `<VAR>_FILE`; for apps not binding structs (viper, raw `os.Getenv`)
 
 ### Initializer Pattern (`initializer.go`)
 

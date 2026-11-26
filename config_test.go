@@ -371,6 +371,65 @@ func TestReadFromEnvFile(t *testing.T) {
 	}
 }
 
+func TestEnvOrFile(t *testing.T) {
+	secretDir := t.TempDir()
+	passwordFile := filepath.Join(secretDir, "password")
+	if err := os.WriteFile(passwordFile, []byte("hunter2\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	tests := []struct {
+		name    string
+		env     map[string]string
+		want    string
+		wantErr bool
+	}{
+		{
+			name: "env value wins",
+			env:  map[string]string{"TEST_EOF": "fromEnv", "TEST_EOF_FILE": passwordFile},
+			want: "fromEnv",
+		},
+		{
+			name: "file fallback trims one trailing newline",
+			env:  map[string]string{"TEST_EOF_FILE": passwordFile},
+			want: "hunter2",
+		},
+		{
+			name: "empty env counts as set",
+			env:  map[string]string{"TEST_EOF": ""},
+			want: "",
+		},
+		{
+			name:    "missing file errors",
+			env:     map[string]string{"TEST_EOF_FILE": filepath.Join(secretDir, "missing")},
+			wantErr: true,
+		},
+		{
+			name: "neither source set yields empty",
+			env:  map[string]string{"SOMETHING_ELSE": "1"},
+			want: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			for k, v := range tt.env {
+				// nolint
+				os.Setenv(k, v)
+			}
+			defer os.Clearenv()
+
+			got, err := EnvOrFile("TEST_EOF")
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("wrong error behavior %v, wantErr %v", err, tt.wantErr)
+			}
+			if err == nil && got != tt.want {
+				t.Errorf("wrong data %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestReadFromFlags(t *testing.T) {
 	type Config struct {
 		Host  string   `flag:"host"`

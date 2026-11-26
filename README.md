@@ -53,6 +53,21 @@ To expose the settings as CLI flags, call `libstandard.AddDatabaseFlags(cmd)`.
 > to inherit pgx's sane defaults (1h / 30m).
 
 
+## Single values
+
+Apps that do not bind config through a struct (viper, plain `os.Getenv`) can
+still use the `<VAR>_FILE` convention through `EnvOrFile`:
+
+```go
+apiKey, err := libstandard.EnvOrFile("API_KEY")
+if err != nil { /* broken secret mount */ }
+```
+
+The value comes from the `API_KEY` env var when set, otherwise from the file
+`API_KEY_FILE` points at. Unset both yield `""`; a missing or oversized file
+returns an error instead of silently producing an empty secret.
+
+
 ## Security
 
 When discovering security issues please refer to the [Security process](https://github.com/ckotzbauer/.github/blob/main/SECURITY.md).

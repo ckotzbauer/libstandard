@@ -405,6 +405,25 @@ func readStructMetadata(cfgRoot interface{}) ([]structMeta, error) {
 	return metas, nil
 }
 
+// EnvOrFile returns the value of the environment variable name. When the
+// variable itself is unset, the value is read from the file referenced by
+// <NAME>_FILE (see EnvFileSuffix) -- e.g. a volume-mounted k8s secret. It
+// returns ("", nil) when neither source provides a value, mirroring os.Getenv.
+// A _FILE variable pointing at a missing, broken or oversized file returns an
+// error instead of silently yielding an empty value. The file content has at
+// most one trailing newline stripped; everything else is kept verbatim.
+func EnvOrFile(name string) (string, error) {
+	if value, ok := os.LookupEnv(name); ok {
+		return value, nil
+	}
+
+	if path, ok := os.LookupEnv(name + EnvFileSuffix); ok {
+		return readFileValue(path)
+	}
+
+	return "", nil
+}
+
 // readEnvVars reads environment variables to the provided configuration structure
 func readEnvVars(cfg interface{}, metaInfo []structMeta) error {
 	for _, meta := range metaInfo {
